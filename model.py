@@ -6,23 +6,30 @@ class Bottleneck(nn.Module):
         super(Bottleneck, self).__init__()
 
         self.conv1 = self.conv(kernel_size=1, in_channels=in_channels,
-                out_channels=out_channels/4, stride=stride)
+                out_channels=int(out_channels/4), stride=stride)
 
-        self.bn = nn.BatchNorm2d(planes)
+        self.bn = nn.BatchNorm2d(int(out_channels/4))
 
-        self.conv2 = self.conv(kernel_size=3, in_channels=out_channels/4,
-                out_channels=out_channels/4, stride=stride, padding=padding)
+        self.conv2 = self.conv(kernel_size=3, in_channels=int(out_channels/4),
+                out_channels=int(out_channels/4), stride=stride, padding=1)
 
-        self.conv3 = self.conv(kernel_size=1, in_channels=out_channels/4,
+        self.conv3 = self.conv(kernel_size=1, in_channels=int(out_channels/4),
                 out_channels=out_channels, stride=stride)
 
-        self.bn2 =nn.BatchNord2d(out_channels)
+        self.bn2 =nn.BatchNorm2d(out_channels)
 
         self.relu = nn.LeakyReLU(inplace=True)
 
     def conv(self, kernel_size, in_channels, out_channels, stride=1, padding=0):
         return nn.Conv2d(in_channels=in_channels, out_channels=out_channels,
                 kernel_size=kernel_size, stride=stride, padding=padding)
+
+    def down_sampling(self, x, i):
+        i = nn.Conv2d(kernel_size=1, in_channels=i.shape[1],
+                out_channels=x.shape[1], stride=1)(i)
+        i = nn.BatchNorm2d(x.shape[1])(i)
+        
+        return i
 
     def forward(self, x):
         identity = x
@@ -35,6 +42,9 @@ class Bottleneck(nn.Module):
 
         x = self.conv3(x)
         x = self.bn2(x)
+
+        if x.shape != identity.shape:
+            identity = self.down_sampling(x, identity)
 
         x = x + identity
 
@@ -52,22 +62,22 @@ class ResNet_152(nn.Module):
 
         self.layer2 = [Bottleneck(in_channels=64, out_channels=256)]
         for i in range(2):
-            self.layer2.extend(Bottleneck(in_channels=256, out_channels=256))
+            self.layer2.append(Bottleneck(in_channels=256, out_channels=256))
         self.layer2 = nn.Sequential(*self.layer2)
 
         self.layer3 = [Bottleneck(in_channels=256, out_channels=512)]
         for i in range(7):
-            self.layer3.extend(Bottleneck(in_channels=512, out_channels=512))
+            self.layer3.append(Bottleneck(in_channels=512, out_channels=512))
         self.layer3 = nn.Sequential(*self.layer3)
 
         self.layer4 = [Bottleneck(in_channels=512, out_channels=1024)]
         for i in range(35):
-            self.layer4.extend(Bottleneck(in_channels=1024, out_channels=1024))
+            self.layer4.append(Bottleneck(in_channels=1024, out_channels=1024))
         self.layer4 = nn.Sequential(*self.layer4)
 
         self.layer5 = [Bottleneck(in_channels=1024, out_channels=2048)]
         for i in range(2):
-            self.layer5.extend(Bottleneck(in_channels=2048, out_channels=2048))
+            self.layer5.append(Bottleneck(in_channels=2048, out_channels=2048))
         self.layer5 = nn.Sequential(*self.layer5)
 
         self.avgPool = nn.AdaptiveAvgPool2d((1, 1))
@@ -76,8 +86,8 @@ class ResNet_152(nn.Module):
 
 
         for m in self.modules():
-            if isinstance(m. nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode='fan_oout', nonlinearly='leakyrelu')
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='leaky_relu')
 
             elif isinstance(m, nn.BatchNorm2d):
                 nn.init.constant_(m.weight, 1)
