@@ -48,8 +48,7 @@ class Bottleneck(nn.Module):
         
         
         if identity.shape != x.shape:
-            identity = self.downsample(in_channels=identity.shape[1], out_channels=x.shape[1],
-                stride=self.stride)(identity)
+            identity = self.downsampling(identity)
 
         x += identity
         

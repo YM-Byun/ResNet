@@ -21,9 +21,9 @@ class Adaptive_lr:
         self.optimizer = optimizer
 
     def save_info(self, loss):
-        self.record.append(round(loss, 3))
+        self.record.append(round(loss, 2))
 
-        if len(self.record) > 10:
+        if len(self.record) > 6:
             del self.record[0]
 
     def update_lr(self):
@@ -37,7 +37,7 @@ class Adaptive_lr:
         self.record.clear()
 
     def is_update_lr(self, loss):
-        if self.record.count(round(loss, 3)) > 6:
+        if self.record.count(round(loss, 2)) > 3:
             self.update_lr()
 
 def main():
