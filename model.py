@@ -21,7 +21,8 @@ class Bottleneck(nn.Module):
 
         self.relu = nn.LeakyReLU(inplace=True)
 
-        self.stride = stride
+        self.downsampling = self.downsample(in_channels=in_channels, out_channels=out_channels,
+                stride=stride)
 
     def downsample(self, in_channels, out_channels, stride=1):
         return nn.Sequential(
@@ -45,13 +46,13 @@ class Bottleneck(nn.Module):
         x = self.conv3(x)
         x = self.bn2(x)
         
-        '''
+        
         if identity.shape != x.shape:
             identity = self.downsample(in_channels=identity.shape[1], out_channels=x.shape[1],
                 stride=self.stride)(identity)
 
         x += identity
-        '''
+        
 
         x = self.relu(x)
 
