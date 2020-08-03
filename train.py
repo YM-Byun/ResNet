@@ -6,7 +6,7 @@ import torch.nn as nn
 
 from torchvision.datasets import CIFAR10
 from torch.utils.data import DataLoader
-from model import ResNet_152
+from model import ResNet
 
 batch_size =128
 momentum=0.9
@@ -68,7 +68,7 @@ def main():
 
     print ("========================================\n")
 
-    resnet = ResNet_152()
+    resnet = ResNet('resnet18')
 
     if is_cuda:
         resnet.cuda()

@@ -2,19 +2,65 @@ import torch
 import torch.nn as nn
 from torch.autograd import Variable
 
+def conv(kernel_size, in_channels, out_channels, stride=1, padding=0):
+    return nn.Conv2d(in_channels=in_channels, out_channels=out_channels,
+            kernel_size=kernel_size, stride=stride, padding=padding)
+
+cfg = {'resnet152': [2, 7, 35, 2], 'resnet18': [1, 1, 1, 1]}
+
+class Basicblock(nn.Module):
+    def __init__(self, in_channels, out_channels, stride=1):
+        super(Basicblock, self).__init__()
+
+        self.conv1 = conv(kernel_size=3, in_channels=in_channels, out_channels=out_channels,
+                stride=stride, padding=1)
+        self.bn = nn.BatchNorm2d(out_channels)
+
+        self.conv2 = conv(kernel_size=3, in_channels=out_channels, out_channels=out_channels,
+                stride=stride, padding=1)
+
+        self.relu = nn.LeakyReLU(inplace=True)
+
+        self.increase_dimension = self.increase(in_channels=in_channels, out_channels=out_channels,
+                stride=stride)
+
+    def increase(self, in_channels, out_channels, stride=1):
+        return nn.Sequential(
+                nn.Conv2d(in_channels=in_channels, out_channels=out_channels,
+                        kernel_size=1, stride=stride),
+                nn.BatchNorm2d(out_channels))
+
+    def forward(self, x):
+        identity = x
+        
+        x = self.conv1(x)
+        x = self.bn(x)
+
+        x = self.conv2(x)
+        x = self.bn(x)
+
+        if x.shape != identity.shape:
+            identity = self.increase_dimension(identity)
+
+        x += identity
+
+        x = self.relu(x)
+
+        return x
+
 class Bottleneck(nn.Module):
     def __init__(self, in_channels, out_channels, stride=1):
         super(Bottleneck, self).__init__()
 
-        self.conv1 = self.conv(kernel_size=1, in_channels=in_channels,
+        self.conv1 = conv(kernel_size=1, in_channels=in_channels,
                 out_channels=int(out_channels/4), stride=stride)
 
         self.bn = nn.BatchNorm2d(int(out_channels/4))
 
-        self.conv2 = self.conv(kernel_size=3, in_channels=int(out_channels/4),
+        self.conv2 = conv(kernel_size=3, in_channels=int(out_channels/4),
                 out_channels=int(out_channels/4), stride=stride, padding=1)
 
-        self.conv3 = self.conv(kernel_size=1, in_channels=int(out_channels/4),
+        self.conv3 = conv(kernel_size=1, in_channels=int(out_channels/4),
                 out_channels=out_channels, stride=stride)
 
         self.bn2 =nn.BatchNorm2d(out_channels)
@@ -29,10 +75,6 @@ class Bottleneck(nn.Module):
                 nn.Conv2d(in_channels=in_channels, out_channels=out_channels,
                         kernel_size=1, stride=stride),
                 nn.BatchNorm2d(out_channels))
-
-    def conv(self, kernel_size, in_channels, out_channels, stride=1, padding=0):
-        return nn.Conv2d(in_channels=in_channels, out_channels=out_channels,
-                kernel_size=kernel_size, stride=stride, padding=padding)
 
     def forward(self, x):
         identity = x
@@ -57,9 +99,9 @@ class Bottleneck(nn.Module):
 
         return x
 
-class ResNet_152(nn.Module):
-    def __init__(self):
-        super(ResNet_152, self).__init__()
+class ResNet(nn.Module):
+    def __init__(self, resnet_type):
+        super(ResNet, self).__init__()
 
         self.layer1 = nn.Sequential(
                 nn.Conv2d(in_channels=3, out_channels=64, stride=2,
@@ -67,28 +109,35 @@ class ResNet_152(nn.Module):
                 nn.BatchNorm2d(64),
                 nn.MaxPool2d(kernel_size=3, stride=2, padding=1))
 
-        self.layer2 = [Bottleneck(in_channels=64, out_channels=256)]
-        for i in range(2):
-            self.layer2.append(Bottleneck(in_channels=256, out_channels=256))
+        self.expansion = 1
+        block = Basicblock
+
+        if resnet_type == 'resnet152':
+            self.expansion = 4
+            block = Bottleneck
+
+        self.layer2 = [block(in_channels=64, out_channels=64 * self.expansion)]
+        for i in range(cfg[resnet_type][0]):
+            self.layer2.append(block(in_channels=64*self.expansion, out_channels=64*self.expansion))
         self.layer2 = nn.Sequential(*self.layer2)
 
-        self.layer3 = [Bottleneck(in_channels=256, out_channels=512)]
-        for i in range(7):
-            self.layer3.append(Bottleneck(in_channels=512, out_channels=512))
+        self.layer3 = [block(in_channels=64*self.expansion, out_channels=128*self.expansion)]
+        for i in range(cfg[resnet_type][1]):
+            self.layer3.append(block(in_channels=128*self.expansion, out_channels=128*self.expansion))
         self.layer3 = nn.Sequential(*self.layer3)
 
-        self.layer4 = [Bottleneck(in_channels=512, out_channels=1024)]
-        for i in range(35):
-            self.layer4.append(Bottleneck(in_channels=1024, out_channels=1024))
+        self.layer4 = [block(in_channels=128*self.expansion, out_channels=256*self.expansion)]
+        for i in range(cfg[resnet_type][2]):
+            self.layer4.append(block(in_channels=256*self.expansion, out_channels=256*self.expansion))
         self.layer4 = nn.Sequential(*self.layer4)
 
-        self.layer5 = [Bottleneck(in_channels=1024, out_channels=2048)]
-        for i in range(2):
-            self.layer5.append(Bottleneck(in_channels=2048, out_channels=2048))
+        self.layer5 = [block(in_channels=256*self.expansion, out_channels=512*self.expansion)]
+        for i in range(cfg[resnet_type][3]):
+            self.layer5.append(block(in_channels=512*self.expansion, out_channels=512*self.expansion))
         self.layer5 = nn.Sequential(*self.layer5)
 
         self.avgPool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(512*4, 10)
+        self.fc = nn.Linear(512*self.expansion, 10)
         self.softmax = nn.Softmax(dim=1)
 
 
@@ -109,7 +158,7 @@ class ResNet_152(nn.Module):
         x = self.layer5(x)
 
         x = self.avgPool(x)
-        x = x.view(-1, 512*4)
+        x = x.view(-1, 512*self.expansion)
         x = self.fc(x)
         x = self.softmax(x)
 
@@ -119,9 +168,20 @@ class ResNet_152(nn.Module):
 if __name__ == '__main__':
     dummy_data = torch.rand(1, 3, 32, 32)
 
-    resnet = ResNet_152()
+    resnet = ResNet('resnet152')
 
     print ("ResNet 152\n")
+    print (resnet)
+
+    print ("\n=============================================\n")
+
+    x = resnet(dummy_data)
+
+    print (f"Result: {x.shape}")
+
+
+    resnet = ResNet('resnet18')
+    print ("Resnet 18\n")
     print (resnet)
 
     print ("\n=============================================\n")
