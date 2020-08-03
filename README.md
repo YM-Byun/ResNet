@@ -7,7 +7,7 @@
  - Increase dimension using 1x1 conv layer
 
 ## 2. Result
- - At 46 epoch, acc: 81.25, loss: 1.997
+ - At 57 epoch, lr 0.1, acc: 87.5, loss: 1.9374
  - still training...
  
 ## 3. Test
