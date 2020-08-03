@@ -21,10 +21,10 @@ class Bottleneck(nn.Module):
 
         self.relu = nn.LeakyReLU(inplace=True)
 
-        self.downsampling = self.downsample(in_channels=in_channels, out_channels=out_channels,
+        self.increase_dimension = self.increase(in_channels=in_channels, out_channels=out_channels,
                 stride=stride)
 
-    def downsample(self, in_channels, out_channels, stride=1):
+    def increase(self, in_channels, out_channels, stride=1):
         return nn.Sequential(
                 nn.Conv2d(in_channels=in_channels, out_channels=out_channels,
                         kernel_size=1, stride=stride),
