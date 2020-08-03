@@ -1,4 +1,4 @@
-# Resnet 152
+# Resnet
  
 ## 1. Trainning
  - Initalizing Conv layer using He initialization
@@ -7,7 +7,8 @@
  - Increase dimension using 1x1 conv layer
 
 ## 2. Result
- - At 57 epoch, lr 0.1, acc: 87.5, loss: 1.9374
+ - ResNet18 | 
+ - ResNet152 | At 57 epoch, lr 0.1, acc: 87.5, loss: 1.9374
  - still training...
  
 ## 3. Test
