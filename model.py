@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from torch.autograd import Variable
 
 class Bottleneck(nn.Module):
     def __init__(self, in_channels, out_channels, stride=1):
@@ -24,13 +25,6 @@ class Bottleneck(nn.Module):
         return nn.Conv2d(in_channels=in_channels, out_channels=out_channels,
                 kernel_size=kernel_size, stride=stride, padding=padding)
 
-    def down_sampling(self, x, i):
-        i = nn.Conv2d(kernel_size=1, in_channels=i.shape[1],
-                out_channels=x.shape[1], stride=1)(i)
-        i = nn.BatchNorm2d(x.shape[1])(i)
-        
-        return i
-
     def forward(self, x):
         identity = x
 
@@ -42,11 +36,19 @@ class Bottleneck(nn.Module):
 
         x = self.conv3(x)
         x = self.bn2(x)
+        
 
-        if x.shape != identity.shape:
-            identity = self.down_sampling(x, identity)
+        if identity.shape != x.shape:
+            zero_padding = Variable(torch.zeros(x.shape[0], x.shape[1] - identity.shape[1],
+                x.shape[2], x.shape[3]))
+            zero_padding = zero_padding.cuda()
+            identity = torch.cat((identity, zero_padding), 1)
+            identity = identity.cuda()
+            identity = nn.BatchNorm2d(x.shape[1])(identity)
 
-        x = x + identity
+        x += identity
+
+        x = self.relu(x)
 
         return x
 
