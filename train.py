@@ -142,6 +142,8 @@ def train(train_loader, model, criterion, optimizer, epoch):
 def validate(val_loader, model, criterion, epoch):
     model.eval()
     running_loss = 0.0
+    total_acc1 = 0.0
+    total_acc5 = 0.0
 
     with torch.no_grad():
         for i, data in enumerate(val_loader):
@@ -155,10 +157,15 @@ def validate(val_loader, model, criterion, epoch):
 
             running_loss += loss.item()
             acc1, acc5 = accuracy(outputs, label, topk=(1,5))
+            total_acc1 += acc1
+            total_acc5 += acc5
 
-    print (f"Epoch [{epoch+1}/{epochs}] | Validation | acc1 = {acc1[0]:.3f} | acc5 = {acc5[0]:.3f} | loss = {(running_loss / float(i)):.5f}")
+    total_acc1 /= len(val_loader)
+    total_acc5 /= len(val_loader)
 
-    return acc1[0], (running_loss / float(i))
+    print (f"Epoch [{epoch+1}/{epochs}] | Validation | acc1 = {total_acc1[0]:.3f} | acc5 = {total_acc5[0]:.3f} | loss = {(running_loss / float(i)):.5f}")
+
+    return total_acc1[0], (running_loss / float(i))
 
 def get_lr(optimizer):
     lr = 0.0
