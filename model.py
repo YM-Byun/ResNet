@@ -21,6 +21,14 @@ class Bottleneck(nn.Module):
 
         self.relu = nn.LeakyReLU(inplace=True)
 
+        self.stride = stride
+
+    def downsample(self, in_channels, out_channels, stride=1):
+        return nn.Sequential(
+                nn.Conv2d(in_channels=in_channels, out_channels=out_channels,
+                        kernel_size=1, stride=stride),
+                nn.BatchNorm2d(out_channels))
+
     def conv(self, kernel_size, in_channels, out_channels, stride=1, padding=0):
         return nn.Conv2d(in_channels=in_channels, out_channels=out_channels,
                 kernel_size=kernel_size, stride=stride, padding=padding)
@@ -37,16 +45,13 @@ class Bottleneck(nn.Module):
         x = self.conv3(x)
         x = self.bn2(x)
         
-
+        '''
         if identity.shape != x.shape:
-            zero_padding = Variable(torch.zeros(x.shape[0], x.shape[1] - identity.shape[1],
-                x.shape[2], x.shape[3]))
-            zero_padding = zero_padding.cuda()
-            identity = torch.cat((identity, zero_padding), 1)
-            identity = identity.cuda()
-            identity = nn.BatchNorm2d(x.shape[1])(identity)
+            identity = self.downsample(in_channels=identity.shape[1], out_channels=x.shape[1],
+                stride=self.stride)(identity)
 
         x += identity
+        '''
 
         x = self.relu(x)
 
