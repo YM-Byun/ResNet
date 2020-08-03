@@ -48,7 +48,7 @@ class Bottleneck(nn.Module):
         
         
         if identity.shape != x.shape:
-            identity = self.downsampling(identity)
+            identity = self.increase_dimension(identity)
 
         x += identity
         
