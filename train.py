@@ -21,9 +21,9 @@ class Adaptive_lr:
         self.optimizer = optimizer
 
     def save_info(self, loss):
-        self.record.append(round(loss, 2))
+        self.record.append(round(loss, 3))
 
-        if len(self.record) > 6:
+        if len(self.record) > 11:
             del self.record[0]
 
     def update_lr(self):
@@ -37,7 +37,7 @@ class Adaptive_lr:
         self.record.clear()
 
     def is_update_lr(self, loss):
-        if self.record.count(round(loss, 2)) > 3:
+        if self.record.count(round(loss, 3)) > 5:
             self.update_lr()
 
 def main():
@@ -137,7 +137,7 @@ def train(train_loader, model, criterion, optimizer, epoch):
         acc1, acc5 = accuracy(outputs, label, topk=(1,5))
 
         if (i % 50 == 49) or (i == len(train_loader) - 1):
-            print (f"Epoch [{epoch+1}/{epochs}] | Train iter [{i+1}/{len(train_loader)}] | acc1 = {acc1[0]:.3f} | acc5 = {acc5[0]:.3f} | loss = {(running_loss / float(i+1)):.5f}")
+            print (f"Epoch [{epoch+1}/{epochs}] | Train iter [{i+1}/{len(train_loader)}] | acc1 = {acc1[0]:.3f} | acc5 = {acc5[0]:.3f} | loss = {(running_loss / float(i+1)):.5f} | lr = {get_lr(optimizer):.5f}")
 
 def validate(val_loader, model, criterion, epoch):
     model.eval()
@@ -159,6 +159,13 @@ def validate(val_loader, model, criterion, epoch):
     print (f"Epoch [{epoch+1}/{epochs}] | Validation | acc1 = {acc1[0]:.3f} | acc5 = {acc5[0]:.3f} | loss = {(running_loss / float(i)):.5f}")
 
     return acc1[0], (running_loss / float(i))
+
+def get_lr(optimizer):
+    lr = 0.0
+    for param_group in optimizer.param_groups:
+        lr = param_group['lr']
+        break
+    return lr
 
 def accuracy(output, label, topk=(1,)):
     with torch.no_grad():
