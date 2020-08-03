@@ -7,7 +7,7 @@
  - Increase dimension using 1x1 conv layer
 
 ## 2. Result
- - ResNet18 | 
+ - ResNet18 | acc: 58.00% loss: 1.9@@
  - ResNet152 | At 57 epoch, lr 0.1, acc: 87.5, loss: 1.9374
  - still training...
  
