@@ -35,6 +35,7 @@ class Basicblock(nn.Module):
         
         x = self.conv1(x)
         x = self.bn(x)
+        x = self.relu(x)
 
         x = self.conv2(x)
         x = self.bn(x)
@@ -81,9 +82,11 @@ class Bottleneck(nn.Module):
 
         x = self.conv1(x)
         x = self.bn(x)
+        x = self.relu(x)
 
         x = self.conv2(x)
         x = self.bn(x)
+        x = self.relu(x)
 
         x = self.conv3(x)
         x = self.bn2(x)
