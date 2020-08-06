@@ -17,31 +17,6 @@ epochs = 240
 is_cuda = torch.cuda.is_available()
 device = torch.device('cuda' if is_cuda else 'cpu')
 
-class Adaptive_lr:
-    def __init__(self, optimizer):
-        self.record = []
-        self.optimizer = optimizer
-
-    def save_info(self, loss):
-        self.record.append(round(loss, 3))
-
-        if len(self.record) > 11:
-            del self.record[0]
-
-    def update_lr(self):
-        global learning_rate
-        learning_rate *= 0.1
-        for param in self.optimizer.param_groups:
-            param['lr'] = learning_rate
-
-        print (f"\nupdate lr to {learning_rate}!\n")
-
-        self.record.clear()
-
-    def is_update_lr(self, loss):
-        if self.record.count(round(loss, 3)) > 5:
-            self.update_lr()
-
 def get_parser():
     parser = argparse.ArgumentParser(description='ResNet')
     parser.add_argument('--gpu', type=int, default=-1,
@@ -99,14 +74,15 @@ def main():
     optimizer = torch.optim.SGD(resnet.parameters(), lr=learning_rate, momentum=momentum,
             weight_decay=weight_decay)
     criterion = nn.CrossEntropyLoss()
-
+    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min')
+    
     adaptive_lr = Adaptive_lr(optimizer)
 
     best_acc = 0.0
     best_loss = 9.0
 
     if is_cuda:
-        criterion = criterion.to(device)
+        criterion, scheduler = criterion.to(device), scheduler.to(device)
 
     for epoch in range(epochs):
         train(train_loader, resnet, criterion, optimizer, epoch)
@@ -114,6 +90,8 @@ def main():
         print ("")
 
         acc, loss = validate(val_loader, resnet, criterion, epoch)
+
+        scheduler.step(loss)
 
         is_best = False
 
@@ -133,9 +111,6 @@ def main():
         print ("\n========================================\n")
 
         torch.save(resnet.state_dict(), "./weight/lastest_weight.pth")
-
-        adaptive_lr.save_info(loss)
-        adaptive_lr.is_update_lr(loss)
 
 def train(train_loader, model, criterion, optimizer, epoch):
     model.train()
