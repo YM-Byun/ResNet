@@ -76,8 +76,6 @@ def main():
     criterion = nn.CrossEntropyLoss()
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min')
     
-    adaptive_lr = Adaptive_lr(optimizer)
-
     best_acc = 0.0
     best_loss = 9.0
 
