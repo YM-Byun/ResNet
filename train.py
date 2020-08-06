@@ -3,6 +3,7 @@ import torchvision.transforms as transforms
 import time
 import sys
 import torch.nn as nn
+import argparse
 
 from torchvision.datasets import CIFAR10
 from torch.utils.data import DataLoader
@@ -14,6 +15,7 @@ weight_decay = 0.0001
 learning_rate = 0.1
 epochs = 240
 is_cuda = torch.cuda.is_available()
+device = torch.device('cuda' if is_cuda else 'cpu')
 
 class Adaptive_lr:
     def __init__(self, optimizer):
@@ -40,7 +42,26 @@ class Adaptive_lr:
         if self.record.count(round(loss, 3)) > 5:
             self.update_lr()
 
+def get_parser():
+    parser = argparse.ArgumentParser(description='ResNet')
+    parser.add_argument('--gpu', type=int, default=-1,
+            help='specific gpu num')
+
+    parser.add_argument('--model', type=str, default='resnet18',
+            help='ResNet model')
+
+    args = parser.parse_args()
+
+    return args
+
 def main():
+    parser = get_parser()
+
+    global device
+
+    if parser.gpu != -1:
+        device = torch.device('cuda:' + str(parser.gpu))
+
     transform = transforms.Compose(
         [transforms.RandomCrop(32, padding=4),
         transforms.RandomHorizontalFlip(),
@@ -68,10 +89,10 @@ def main():
 
     print ("========================================\n")
 
-    resnet = ResNet('resnet18')
+    resnet = ResNet(parser.model)
 
     if is_cuda:
-        resnet.cuda()
+        resnet.to(device)
 
     global learning_rate
 
@@ -85,7 +106,7 @@ def main():
     best_loss = 9.0
 
     if is_cuda:
-        criterion = criterion.cuda()
+        criterion = criterion.to(device)
 
     for epoch in range(epochs):
         train(train_loader, resnet, criterion, optimizer, epoch)
@@ -120,11 +141,13 @@ def train(train_loader, model, criterion, optimizer, epoch):
     model.train()
     running_loss = 0.0
 
+    global device
+
     for i, data in enumerate(train_loader):
         inputs, label = data
 
         if is_cuda:
-            inputs, label = inputs.cuda(), label.cuda()
+            inputs, label = inputs.to(device), label.to(device)
 
         optimizer.zero_grad()
 
@@ -145,12 +168,14 @@ def validate(val_loader, model, criterion, epoch):
     total_acc1 = 0.0
     total_acc5 = 0.0
 
+    global device
+
     with torch.no_grad():
         for i, data in enumerate(val_loader):
             inputs, label = data
 
             if is_cuda:
-                inputs, label = inputs.cuda(), label.cuda()
+                inputs, label = inputs.to(device), label.to(device)
 
             outputs = model(inputs)
             loss = criterion(outputs, label)
