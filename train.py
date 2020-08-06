@@ -80,7 +80,7 @@ def main():
     best_loss = 9.0
 
     if is_cuda:
-        criterion, scheduler = criterion.to(device), scheduler.to(device)
+        criterion = criterion.to(device)
 
     for epoch in range(epochs):
         train(train_loader, resnet, criterion, optimizer, epoch)
