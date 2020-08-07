@@ -107,10 +107,10 @@ class ResNet(nn.Module):
         super(ResNet, self).__init__()
 
         self.layer1 = nn.Sequential(
-                nn.Conv2d(in_channels=3, out_channels=64, stride=2,
-                    kernel_size=7, padding=3),
+                nn.Conv2d(in_channels=3, out_channels=64, stride=1,
+                    kernel_size=3, padding=1),
                 nn.BatchNorm2d(64),
-                nn.MaxPool2d(kernel_size=3, stride=2, padding=1))
+                nn.MaxPool2d(kernel_size=3, stride=1, padding=1))
 
         self.expansion = 1
         block = Basicblock
