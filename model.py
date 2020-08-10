@@ -5,7 +5,7 @@ import torch.nn.functional as F
 cfg = {'resnet18': [2, 2, 2, 2], 'resnet34': [3, 4, 6, 3]}
 
 class Basicblock(nn.Module):
-    def __init__(self, in_channels, out_channels, stride=1, padding=1, kernel_size=3, increase=None):
+    def __init__(self, in_channels, out_channels, stride=1, padding=1, kernel_size=3):
         super(Basicblock, self).__init__()
 
         self.conv1 = nn.Conv2d(in_channels=in_channels, out_channels=out_channels, stride=stride, padding=padding, kernel_size=kernel_size, bias=False)
@@ -82,22 +82,13 @@ class ResNet(nn.Module):
 
 
     def get_layer(self, block, channels, stride, n):
-        increase = None
-
-        if stride != 1 or self.inplanes != channels:
-            increase = nn.Sequential(
-                    nn.Conv2d(kernel_size=1, in_channels=self.inplanes, out_channels=channels,
-                        stride=stride),
-                    nn.BatchNorm2d(channels))
-
-
-        layers = [block(in_channels=self.inplanes, out_channels=channels, stride=stride,
-                increase=increase)]
+        layers = [block(in_channels=self.inplanes, out_channels=channels,
+            stride=stride)]
 
         self.inplanes = channels
 
         for i in range(n-1):
-            layers.append(block(in_channels=self.inplanes, out_channels=channels, increase=increase))
+            layers.append(block(in_channels=self.inplanes, out_channels=channels))
 
         layers = nn.Sequential(*layers)
 
