@@ -9,46 +9,71 @@ from torchvision.datasets import CIFAR10
 from torch.utils.data import DataLoader
 from model import ResNet
 
-batch_size =128
+batch_size=256
 momentum=0.9
-weight_decay = 0.0001
-learning_rate = 0.1
-epochs = 240
+weight_decay = 0.005
+learning_rate = 0.01
+epochs = 150
 is_cuda = torch.cuda.is_available()
 device = torch.device('cuda' if is_cuda else 'cpu')
 
-def get_parser():
-    parser = argparse.ArgumentParser(description='ResNet')
-    parser.add_argument('--gpu', type=int, default=-1,
-            help='specific gpu num')
+def get_mean_std(dataset):
+    mean = dataset.data.mean(axis=(0,1,2,)) / 255
+    std = dataset.data.std(axis=(0,1,2,)) / 255
 
-    parser.add_argument('--model', type=str, default='resnet18',
-            help='ResNet model')
+    return mean, std
+
+def get_parser():
+    parser = argparse.ArgumentParser(description='VGG16')
+    parser.add_argument('--gpu', type=int, default=-1,
+            help='gpu number')
 
     args = parser.parse_args()
 
     return args
 
 def main():
-    parser = get_parser()
-
     global device
 
-    if parser.gpu != -1:
+    parser = get_parser()
+
+    if (parser.gpu != -1):
         device = torch.device('cuda:' + str(parser.gpu))
 
-    transform = transforms.Compose(
-        [transforms.RandomCrop(32, padding=4),
+    cifar10_dataset = CIFAR10(root='./dataset', train=True,
+            download=True)
+
+    mean, std = get_mean_std(cifar10_dataset)
+
+    transform_v1 = transforms.Compose([
+        transforms.RandomCrop(32),
         transforms.RandomHorizontalFlip(),
+        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
         transforms.ToTensor(),
-        transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2470, 0.2435, 0.2616))])
+        transforms.Normalize(mean=mean, std=std)])
+
+    transform_v2 = transforms.Compose([
+        transforms.Resize(64),
+        transforms.RandomCrop(32),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=mean, std=std)])
+
+    transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize(mean=mean, std=std)])
 
     print ("\nLoading Cifar 10 Dataset...")
 
-    train_dataset = CIFAR10(root='./dataset', train=True,
-            download=True, transform=transform)
+    train1 = CIFAR10(root='./dataset', train=True, download=True,
+        transform=transform)
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size,
+    train2 = CIFAR10(root='./dataset', train=True, download=False,
+        transform=transform_v1)
+
+    train3 = CIFAR10(root='./dataset', train=True, download=False,
+        transform=transform_v2)
+
+    train_loader = DataLoader(train1+train2+train3, batch_size=batch_size,
             shuffle=True, num_workers=4)
 
     val_dataset = CIFAR10(root='./dataset', train=False,
@@ -62,34 +87,31 @@ def main():
 
     print ("Loaded Cifar 10!\n")
 
-    print ("========================================\n")
+    print ("\n========================================\n")
 
-    resnet = ResNet(parser.model)
-
-    if is_cuda:
-        resnet.to(device)
+    resnet = ResNet()
 
     global learning_rate
 
     optimizer = torch.optim.SGD(resnet.parameters(), lr=learning_rate, momentum=momentum,
             weight_decay=weight_decay)
     criterion = nn.CrossEntropyLoss()
-    scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'min')
-    
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[80, 125])
+
     best_acc = 0.0
     best_loss = 9.0
 
     if is_cuda:
+        resnet.to(device)
         criterion = criterion.to(device)
 
     for epoch in range(epochs):
-        train(train_loader, resnet, criterion, optimizer, epoch)
+
+        train(train_loader, resnet, criterion, optimizer, scheduler, epoch)
 
         print ("")
 
         acc, loss = validate(val_loader, resnet, criterion, epoch)
-
-        scheduler.step(loss)
 
         is_best = False
 
@@ -110,11 +132,9 @@ def main():
 
         torch.save(resnet.state_dict(), "./weight/lastest_weight.pth")
 
-def train(train_loader, model, criterion, optimizer, epoch):
+def train(train_loader, model, criterion, optimizer, scheduler, epoch):
     model.train()
     running_loss = 0.0
-
-    global device
 
     for i, data in enumerate(train_loader):
         inputs, label = data
@@ -135,13 +155,14 @@ def train(train_loader, model, criterion, optimizer, epoch):
         if (i % 50 == 49) or (i == len(train_loader) - 1):
             print (f"Epoch [{epoch+1}/{epochs}] | Train iter [{i+1}/{len(train_loader)}] | acc1 = {acc1[0]:.3f} | acc5 = {acc5[0]:.3f} | loss = {(running_loss / float(i+1)):.5f} | lr = {get_lr(optimizer):.5f}")
 
+    scheduler.step()
+
 def validate(val_loader, model, criterion, epoch):
     model.eval()
     running_loss = 0.0
+
     total_acc1 = 0.0
     total_acc5 = 0.0
-
-    global device
 
     with torch.no_grad():
         for i, data in enumerate(val_loader):
@@ -155,11 +176,12 @@ def validate(val_loader, model, criterion, epoch):
 
             running_loss += loss.item()
             acc1, acc5 = accuracy(outputs, label, topk=(1,5))
+
             total_acc1 += acc1
             total_acc5 += acc5
 
-    total_acc1 /= len(val_loader)
-    total_acc5 /= len(val_loader)
+        total_acc1 /= len(val_loader)
+        total_acc5 /= len(val_loader)
 
     print (f"Epoch [{epoch+1}/{epochs}] | Validation | acc1 = {total_acc1[0]:.3f} | acc5 = {total_acc5[0]:.3f} | loss = {(running_loss / float(i)):.5f}")
 
@@ -170,6 +192,7 @@ def get_lr(optimizer):
     for param_group in optimizer.param_groups:
         lr = param_group['lr']
         break
+
     return lr
 
 def accuracy(output, label, topk=(1,)):
