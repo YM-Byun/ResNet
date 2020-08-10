@@ -1,0 +1,122 @@
+Files already downloaded and verified
+
+Loading Cifar 10 Dataset...
+Files already downloaded and verified
+Files already downloaded and verified
+Loaded Cifar 10!
+
+
+========================================
+
+Epoch [1/150] | Train iter [50/586] | acc1 = 27.344 | acc5 = 83.203 | loss = 2.09382 | lr = 0.01000
+Epoch [1/150] | Train iter [100/586] | acc1 = 32.422 | acc5 = 83.984 | loss = 1.95643 | lr = 0.01000
+Epoch [1/150] | Train iter [150/586] | acc1 = 40.234 | acc5 = 88.672 | loss = 1.87431 | lr = 0.01000
+Epoch [1/150] | Train iter [200/586] | acc1 = 35.156 | acc5 = 91.406 | loss = 1.81315 | lr = 0.01000
+Epoch [1/150] | Train iter [250/586] | acc1 = 42.188 | acc5 = 90.234 | loss = 1.76720 | lr = 0.01000
+Epoch [1/150] | Train iter [300/586] | acc1 = 50.000 | acc5 = 93.750 | loss = 1.72575 | lr = 0.01000
+Epoch [1/150] | Train iter [350/586] | acc1 = 46.875 | acc5 = 91.406 | loss = 1.68961 | lr = 0.01000
+Epoch [1/150] | Train iter [400/586] | acc1 = 44.531 | acc5 = 94.141 | loss = 1.65675 | lr = 0.01000
+Epoch [1/150] | Train iter [450/586] | acc1 = 53.516 | acc5 = 93.750 | loss = 1.62438 | lr = 0.01000
+Epoch [1/150] | Train iter [500/586] | acc1 = 50.000 | acc5 = 93.359 | loss = 1.59507 | lr = 0.01000
+Epoch [1/150] | Train iter [550/586] | acc1 = 52.344 | acc5 = 94.922 | loss = 1.56790 | lr = 0.01000
+Epoch [1/150] | Train iter [586/586] | acc1 = 51.667 | acc5 = 92.917 | loss = 1.54863 | lr = 0.01000
+
+Epoch [1/150] | Validation | acc1 = 62.197 | acc5 = 96.719 | loss = 1.07844
+
+Save best model at acc: 62.1973,  loss: 1.0784!
+
+========================================
+
+Epoch [2/150] | Train iter [50/586] | acc1 = 64.453 | acc5 = 95.312 | loss = 1.20522 | lr = 0.01000
+Epoch [2/150] | Train iter [100/586] | acc1 = 57.031 | acc5 = 95.703 | loss = 1.20346 | lr = 0.01000
+Epoch [2/150] | Train iter [150/586] | acc1 = 56.250 | acc5 = 94.141 | loss = 1.19146 | lr = 0.01000
+Epoch [2/150] | Train iter [200/586] | acc1 = 58.594 | acc5 = 93.750 | loss = 1.18428 | lr = 0.01000
+Epoch [2/150] | Train iter [250/586] | acc1 = 66.797 | acc5 = 96.484 | loss = 1.17369 | lr = 0.01000
+Epoch [2/150] | Train iter [300/586] | acc1 = 59.766 | acc5 = 95.703 | loss = 1.16427 | lr = 0.01000
+Epoch [2/150] | Train iter [350/586] | acc1 = 62.891 | acc5 = 95.703 | loss = 1.15437 | lr = 0.01000
+Epoch [2/150] | Train iter [400/586] | acc1 = 55.859 | acc5 = 93.750 | loss = 1.14221 | lr = 0.01000
+Epoch [2/150] | Train iter [450/586] | acc1 = 57.422 | acc5 = 96.484 | loss = 1.13185 | lr = 0.01000
+Epoch [2/150] | Train iter [500/586] | acc1 = 62.500 | acc5 = 94.531 | loss = 1.12081 | lr = 0.01000
+Epoch [2/150] | Train iter [550/586] | acc1 = 65.625 | acc5 = 96.094 | loss = 1.11225 | lr = 0.01000
+Epoch [2/150] | Train iter [586/586] | acc1 = 57.500 | acc5 = 97.500 | loss = 1.10478 | lr = 0.01000
+
+Epoch [2/150] | Validation | acc1 = 61.924 | acc5 = 96.592 | loss = 1.16363
+
+========================================
+
+Epoch [3/150] | Train iter [50/586] | acc1 = 64.062 | acc5 = 95.703 | loss = 0.97631 | lr = 0.01000
+Epoch [3/150] | Train iter [100/586] | acc1 = 67.969 | acc5 = 95.312 | loss = 0.96801 | lr = 0.01000
+Epoch [3/150] | Train iter [150/586] | acc1 = 66.406 | acc5 = 95.312 | loss = 0.96278 | lr = 0.01000
+Epoch [3/150] | Train iter [200/586] | acc1 = 66.406 | acc5 = 96.484 | loss = 0.95204 | lr = 0.01000
+Epoch [3/150] | Train iter [250/586] | acc1 = 66.016 | acc5 = 96.875 | loss = 0.94468 | lr = 0.01000
+Epoch [3/150] | Train iter [300/586] | acc1 = 69.531 | acc5 = 96.094 | loss = 0.93658 | lr = 0.01000
+Epoch [3/150] | Train iter [350/586] | acc1 = 62.891 | acc5 = 96.875 | loss = 0.93067 | lr = 0.01000
+Epoch [3/150] | Train iter [400/586] | acc1 = 66.016 | acc5 = 97.266 | loss = 0.92305 | lr = 0.01000
+Epoch [3/150] | Train iter [450/586] | acc1 = 75.781 | acc5 = 96.875 | loss = 0.91981 | lr = 0.01000
+Epoch [3/150] | Train iter [500/586] | acc1 = 66.016 | acc5 = 95.312 | loss = 0.91367 | lr = 0.01000
+Epoch [3/150] | Train iter [550/586] | acc1 = 70.312 | acc5 = 98.438 | loss = 0.90865 | lr = 0.01000
+Epoch [3/150] | Train iter [586/586] | acc1 = 71.250 | acc5 = 99.167 | loss = 0.90466 | lr = 0.01000
+
+Epoch [3/150] | Validation | acc1 = 72.021 | acc5 = 98.008 | loss = 0.81882
+
+Save best model at acc: 72.0215,  loss: 0.8188!
+
+========================================
+
+Epoch [4/150] | Train iter [50/586] | acc1 = 66.406 | acc5 = 97.656 | loss = 0.81448 | lr = 0.01000
+Epoch [4/150] | Train iter [100/586] | acc1 = 66.797 | acc5 = 96.875 | loss = 0.81878 | lr = 0.01000
+Epoch [4/150] | Train iter [150/586] | acc1 = 69.922 | acc5 = 95.703 | loss = 0.81786 | lr = 0.01000
+Epoch [4/150] | Train iter [200/586] | acc1 = 73.828 | acc5 = 97.656 | loss = 0.81394 | lr = 0.01000
+Epoch [4/150] | Train iter [250/586] | acc1 = 75.391 | acc5 = 99.609 | loss = 0.80825 | lr = 0.01000
+Epoch [4/150] | Train iter [300/586] | acc1 = 71.875 | acc5 = 96.094 | loss = 0.80544 | lr = 0.01000
+Epoch [4/150] | Train iter [350/586] | acc1 = 75.781 | acc5 = 98.828 | loss = 0.80409 | lr = 0.01000
+Epoch [4/150] | Train iter [400/586] | acc1 = 76.562 | acc5 = 97.656 | loss = 0.80218 | lr = 0.01000
+Epoch [4/150] | Train iter [450/586] | acc1 = 74.219 | acc5 = 96.875 | loss = 0.79908 | lr = 0.01000
+Epoch [4/150] | Train iter [500/586] | acc1 = 77.734 | acc5 = 97.266 | loss = 0.79436 | lr = 0.01000
+Epoch [4/150] | Train iter [550/586] | acc1 = 74.219 | acc5 = 96.875 | loss = 0.79119 | lr = 0.01000
+Epoch [4/150] | Train iter [586/586] | acc1 = 74.167 | acc5 = 97.083 | loss = 0.78865 | lr = 0.01000
+
+Epoch [4/150] | Validation | acc1 = 74.346 | acc5 = 98.623 | loss = 0.77387
+
+Save best model at acc: 74.3457,  loss: 0.7739!
+
+========================================
+
+Epoch [5/150] | Train iter [50/586] | acc1 = 67.578 | acc5 = 97.656 | loss = 0.73064 | lr = 0.01000
+Epoch [5/150] | Train iter [100/586] | acc1 = 75.000 | acc5 = 98.047 | loss = 0.73484 | lr = 0.01000
+Epoch [5/150] | Train iter [150/586] | acc1 = 74.609 | acc5 = 96.875 | loss = 0.73344 | lr = 0.01000
+Epoch [5/150] | Train iter [200/586] | acc1 = 78.125 | acc5 = 97.656 | loss = 0.73042 | lr = 0.01000
+Epoch [5/150] | Train iter [250/586] | acc1 = 74.609 | acc5 = 98.047 | loss = 0.72780 | lr = 0.01000
+Epoch [5/150] | Train iter [300/586] | acc1 = 72.266 | acc5 = 96.484 | loss = 0.72431 | lr = 0.01000
+Epoch [5/150] | Train iter [350/586] | acc1 = 75.391 | acc5 = 98.828 | loss = 0.71939 | lr = 0.01000
+Epoch [5/150] | Train iter [400/586] | acc1 = 75.781 | acc5 = 98.047 | loss = 0.71826 | lr = 0.01000
+Epoch [5/150] | Train iter [450/586] | acc1 = 73.828 | acc5 = 98.438 | loss = 0.71825 | lr = 0.01000
+Epoch [5/150] | Train iter [500/586] | acc1 = 76.953 | acc5 = 97.656 | loss = 0.71507 | lr = 0.01000
+Epoch [5/150] | Train iter [550/586] | acc1 = 80.859 | acc5 = 97.656 | loss = 0.71248 | lr = 0.01000
+Epoch [5/150] | Train iter [586/586] | acc1 = 77.917 | acc5 = 97.917 | loss = 0.71071 | lr = 0.01000
+
+Epoch [5/150] | Validation | acc1 = 78.428 | acc5 = 98.506 | loss = 0.64703
+
+Save best model at acc: 78.4277,  loss: 0.6470!
+
+========================================
+
+Epoch [6/150] | Train iter [50/586] | acc1 = 78.516 | acc5 = 98.828 | loss = 0.66008 | lr = 0.01000
+Epoch [6/150] | Train iter [100/586] | acc1 = 80.078 | acc5 = 98.828 | loss = 0.65855 | lr = 0.01000
+Epoch [6/150] | Train iter [150/586] | acc1 = 80.859 | acc5 = 97.656 | loss = 0.65496 | lr = 0.01000
+Epoch [6/150] | Train iter [200/586] | acc1 = 79.297 | acc5 = 98.438 | loss = 0.65607 | lr = 0.01000
+Epoch [6/150] | Train iter [250/586] | acc1 = 75.000 | acc5 = 98.828 | loss = 0.65846 | lr = 0.01000
+Epoch [6/150] | Train iter [300/586] | acc1 = 76.172 | acc5 = 98.047 | loss = 0.65882 | lr = 0.01000
+Epoch [6/150] | Train iter [350/586] | acc1 = 78.906 | acc5 = 98.438 | loss = 0.65591 | lr = 0.01000
+Epoch [6/150] | Train iter [400/586] | acc1 = 75.781 | acc5 = 96.875 | loss = 0.65530 | lr = 0.01000
+Epoch [6/150] | Train iter [450/586] | acc1 = 73.438 | acc5 = 98.438 | loss = 0.65562 | lr = 0.01000
+Epoch [6/150] | Train iter [500/586] | acc1 = 79.297 | acc5 = 98.828 | loss = 0.65360 | lr = 0.01000
+Epoch [6/150] | Train iter [550/586] | acc1 = 76.172 | acc5 = 99.219 | loss = 0.65166 | lr = 0.01000
+Epoch [6/150] | Train iter [586/586] | acc1 = 79.167 | acc5 = 97.917 | loss = 0.65085 | lr = 0.01000
+
+Epoch [6/150] | Validation | acc1 = 82.266 | acc5 = 99.248 | loss = 0.53405
+
+Save best model at acc: 82.2656,  loss: 0.5340!
+
+========================================
+
