@@ -4,6 +4,9 @@ dataset/
 # Weight path
 weight/
 
+# 94.05% (best)
+! weight/94_05.pth
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
