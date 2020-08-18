@@ -126,7 +126,6 @@ def main():
 
         print ("\n========================================\n")
 
-
 def train(train_loader, model, criterion, optimizer, scheduler, epoch):
     model.train()
     running_loss = 0.0
