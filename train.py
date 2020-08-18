@@ -4,6 +4,7 @@ import time
 import sys
 import torch.nn as nn
 import argparse
+import os
 
 from torchvision.datasets import CIFAR10
 from torch.utils.data import DataLoader
@@ -12,8 +13,8 @@ from model import ResNet
 batch_size=256
 momentum=0.9
 weight_decay = 0.005
-learning_rate = 0.01
-epochs = 135
+learning_rate = 0.1
+epochs = 100
 is_cuda = torch.cuda.is_available()
 device = torch.device('cuda' if is_cuda else 'cpu')
 
@@ -27,6 +28,11 @@ def get_parser():
     parser = argparse.ArgumentParser(description='VGG16')
     parser.add_argument('--gpu', type=int, default=-1,
             help='gpu number')
+
+    parser.add_argument('--model', type=str, default='resnet18',
+            help='model type')
+    
+    parser.add_argument('--result', type=str, default='weight')
 
     args = parser.parse_args()
 
@@ -45,15 +51,7 @@ def main():
 
     mean, std = get_mean_std(cifar10_dataset)
 
-    transform_v1 = transforms.Compose([
-        transforms.RandomCrop(32),
-        transforms.RandomHorizontalFlip(),
-        transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=mean, std=std)])
-
-    transform_v2 = transforms.Compose([
-        transforms.Resize(64),
+    train_transform = transforms.Compose([
         transforms.RandomCrop(32),
         transforms.ToTensor(),
         transforms.Normalize(mean=mean, std=std)])
@@ -64,23 +62,17 @@ def main():
 
     print ("\nLoading Cifar 10 Dataset...")
 
-    train1 = CIFAR10(root='./dataset', train=True, download=True,
-        transform=transform)
+    train_dataset = CIFAR10(root='./dataset', train=True, download=True,
+        transform=train_transform)
 
-    train2 = CIFAR10(root='./dataset', train=True, download=False,
-        transform=transform_v1)
-
-    train3 = CIFAR10(root='./dataset', train=True, download=False,
-        transform=transform_v2)
-
-    train_loader = DataLoader(train1+train2+train3, batch_size=batch_size,
-            shuffle=True, num_workers=4)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size,
+            shuffle=True, num_workers=8)
 
     val_dataset = CIFAR10(root='./dataset', train=False,
             download = True, transform=transform)
 
     val_loader = DataLoader(val_dataset, batch_size=batch_size,
-            shuffle=False, num_workers=4)
+            shuffle=False, num_workers=8)
 
     classes = ('plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog',
             'horse', 'ship', 'truck')
@@ -89,14 +81,18 @@ def main():
 
     print ("\n========================================\n")
 
-    resnet = ResNet()
+    if not os.path.isdir(parser.result):
+        os.mkdir(parser.result)
+
+    resnet = ResNet(parser.model)
+    print (f"Loaded {parser.model}\n\n")
 
     global learning_rate
 
     optimizer = torch.optim.SGD(resnet.parameters(), lr=learning_rate, momentum=momentum,
             weight_decay=weight_decay)
     criterion = nn.CrossEntropyLoss()
-    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[65, 95, 115])
+    scheduler = torch.optim.lr_scheduler.MultiStepLR(optimizer, milestones=[50, 75, 90])
 
     best_acc = 0.0
     best_loss = 9.0
@@ -125,12 +121,11 @@ def main():
             best_acc = acc
 
         if is_best:
-            torch.save(resnet.state_dict(), "./weight/best_weight.pth")
+            torch.save(resnet.state_dict(), parser.result + "/best_"+ parser.model +".pth")
             print (f"\nSave best model at acc: {acc:.4f},  loss: {loss:.4f}!")
 
         print ("\n========================================\n")
 
-        torch.save(resnet.state_dict(), "./weight/lastest_weight.pth")
 
 def train(train_loader, model, criterion, optimizer, scheduler, epoch):
     model.train()
