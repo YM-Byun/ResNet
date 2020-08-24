@@ -124,10 +124,11 @@ class ResNet(nn.Module):
         self.layer5 = self.get_layer(block, channels=512, stride=2, n=cfg[self.model][3])
 
         self.fc = nn.Sequential(
+                nn.Dropout(p=0.5),
                 nn.Linear(512*self.expansion, 10))
 
         for m in self.modules():
-            if isinstance(m, nn.Conv2d):
+            if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
             elif isinstance(m, nn.BatchNorm2d):
                 nn.init.constant_(m.weight, 1)

@@ -10,7 +10,7 @@ from torchvision.datasets import CIFAR10
 from torch.utils.data import DataLoader
 from model import ResNet
 
-batch_size=256
+batch_size=512
 momentum=0.9
 weight_decay = 0.005
 learning_rate = 0.1
@@ -52,7 +52,9 @@ def main():
     mean, std = get_mean_std(cifar10_dataset)
 
     train_transform = transforms.Compose([
-        transforms.RandomCrop(32),
+        transforms.RandomRotation(20),
+        transforms.RandomCrop(32, padding=2),
+        transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize(mean=mean, std=std)])
 
