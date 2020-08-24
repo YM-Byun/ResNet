@@ -6,7 +6,7 @@ import numpy as np
 import argparse
 import os
 
-from model import ResNet_152
+from model import ResNet
 from torch.autograd import Variable
 
 is_cuda = torch.cuda.is_available()
@@ -25,15 +25,15 @@ def main():
 
     img = load_img(img_path)
 
-    print ("\nLoading ResNet 152 weight...")
+    print ("\nLoading ResNet 18 weight...")
 
-    resnet = ResNet_152()
-    resnet.load_state_dict(torch.load('./weight/best_weight.pth'))
+    resnet = ResNet(parser.model)
+    resnet.load_state_dict(torch.load(parser.weight), strict=False)
 
     if is_cuda:
         resnet.cuda()
 
-    print ("\nLoaded ResNet 152 network!\n")
+    print ("\nLoaded ResNet 18 network!\n")
 
     print ("==================================\n")
 
@@ -45,13 +45,20 @@ def get_argparser():
     parser.add_argument('-i', type=str,
             default='./test_img/deer.jpg', help='input image path')
 
+    parser.add_argument('--model', type=str,
+            default='resnet18')
+
+    parser.add_argument('--weight', type=str,
+            default='./weight/93_12_resnet18.pth')
+
     args = parser.parse_args()
 
     return args
 
 
 def load_img(path):
-    transform = transforms.Compose([transforms.Resize((32, 32)),
+    transform = transforms.Compose([
+            transforms.Resize((32, 32)),
             transforms.ToTensor(),
             transforms.Normalize([0.4914, 0.4822, 0.4465], [0.2470, 0.2435, 0.2616])])
 
