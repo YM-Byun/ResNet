@@ -13,7 +13,3 @@ Model | Error Rate(in paper) | Error Rate(implement)
 **ResNet34** | x | 6.94
 **ResNet56** | 6.97 | 6.93
 **ResNet110** |  |
-
-## Other models' acc
- 1. 93.75% (Resnet 101 | https://github.com/kuangliu/pytorch-cifar)
- 2. 93.57% (In originial paper)
