@@ -2,16 +2,16 @@
  
 ## 1. Trainning
  - Initalizing Conv layer using He initialization
- - Cifar 10 dataset, RandomCrop, RandomHorizontalFlip 
- - Increase learning rate from 0.1 to 0.0001
+ - Cifar 10 dataset, RandomCrop, RandomHorizontalFlip, RandomRotation
  - Increase dimension using 1x1 conv layer
 
 ## 2. Result
- - ResNet18 | acc: 94.06% loss: 0.1880
- - still training...
- 
-## 3. Test
-`` python3 test.py -i <IMAGE_PATH> ``
+Model | Error Rate(in paper) | Error Rate(implement)
+---|:---:|---:
+**ResNet18** | x | 7.49
+**ResNet34** | x | 6.94
+**ResNet56** | 6.97 | 6.93
+**ResNet110** |  |
 
 ## Other models' acc
  1. 93.75% (Resnet 101 | https://github.com/kuangliu/pytorch-cifar)
