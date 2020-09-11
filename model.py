@@ -17,7 +17,7 @@ class BasicBlock(nn.Module):
 
         self.bn2 = nn.BatchNorm2d(out_channels)
 
-        self.relu = nn.ReLU(inplace=True)
+        self.relu = nn.LeakyReLU(inplace=True)
 
         self.increase = None
 
@@ -65,7 +65,7 @@ class BottleneckBlock(nn.Module):
 
         self.bn3 = nn.BatchNorm2d(out_channels*4)
 
-        self.relu = nn.ReLU(inplace=True)
+        self.relu = nn.LeakyReLU(inplace=True)
 
         self.increase = None
 
@@ -129,7 +129,7 @@ class ResNet(nn.Module):
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='leaky_relu')
             elif isinstance(m, nn.BatchNorm2d):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)

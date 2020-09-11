@@ -5,14 +5,15 @@ import sys
 import torch.nn as nn
 import argparse
 import os
+import datetime
 
 from torchvision.datasets import CIFAR10
 from torch.utils.data import DataLoader
 from model import ResNet
 
-batch_size=512
+batch_size=128
 momentum=0.9
-weight_decay = 0.005
+weight_decay = 0.0001
 learning_rate = 0.1
 epochs = 100
 is_cuda = torch.cuda.is_available()
@@ -34,6 +35,8 @@ def get_parser():
     
     parser.add_argument('--result', type=str, default='weight')
 
+    parser.add_argument('--log', type=str, default='./log')
+
     args = parser.parse_args()
 
     return args
@@ -52,8 +55,8 @@ def main():
     mean, std = get_mean_std(cifar10_dataset)
 
     train_transform = transforms.Compose([
-        transforms.RandomRotation(20),
-        transforms.RandomCrop(32, padding=2),
+        transforms.RandomRotation(25),
+        transforms.RandomCrop(32, padding=4),
         transforms.RandomHorizontalFlip(),
         transforms.ToTensor(),
         transforms.Normalize(mean=mean, std=std)])
@@ -103,6 +106,9 @@ def main():
         resnet.to(device)
         criterion = criterion.to(device)
 
+    start_time = datetime.datetime.now().strftime('%m_%d__%H_%M_')
+    log_file_name = os.path.join(parser.log, start_time + parser.model + ".txt")
+
     for epoch in range(epochs):
 
         train(train_loader, resnet, criterion, optimizer, scheduler, epoch)
@@ -111,6 +117,7 @@ def main():
 
         acc, loss = validate(val_loader, resnet, criterion, epoch)
 
+        
         is_best = False
 
         if best_acc == acc:
@@ -125,6 +132,8 @@ def main():
         if is_best:
             torch.save(resnet.state_dict(), parser.result + "/best_"+ parser.model +".pth")
             print (f"\nSave best model at acc: {acc:.4f},  loss: {loss:.4f}!")
+
+        logging(acc, loss, epoch, is_best, log_file_name)
 
         print ("\n========================================\n")
 
@@ -190,6 +199,13 @@ def get_lr(optimizer):
         break
 
     return lr
+
+def logging(acc, loss, epoch, is_best, file_name):
+    with open(file_name, 'a+') as f:
+        if is_best:
+            f.write(f'Epoch {epoch+1} | Acc: {acc:.4f} | Val Loss: {loss:.4f} | best\n')
+        else:
+            f.write(f'Epoch {epoch+1} | Acc: {acc:.4f} | Val Loss: {loss:.4f}\n')
 
 def accuracy(output, label, topk=(1,)):
     with torch.no_grad():
