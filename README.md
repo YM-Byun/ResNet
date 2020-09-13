@@ -4,6 +4,7 @@
  - Initalizing Conv layer using He initialization
  - Cifar 10 dataset, RandomCrop, RandomHorizontalFlip, RandomRotation
  - Increase dimension using 1x1 conv layer
+ - 300 epochs
  - Lr 0.01 until error rate belows 80%, then change to 0.1 (ResNet56, ResNet110)
 
 ## 2. Result
