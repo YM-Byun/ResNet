@@ -67,7 +67,7 @@ class ResNet(nn.Module):
         self.layer4 = self.get_layer(block, channels=64, stride=2, n=cfg[self.model][2])
 
         self.fc = nn.Sequential(
-                nn.Linear(256, 10))
+                nn.Linear(64, 10))
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d) or isinstance(m, nn.Linear):
@@ -97,7 +97,7 @@ class ResNet(nn.Module):
         x = self.layer3(x)
         x = self.layer4(x)
 
-        x = F.avg_pool2d(x, 4)
+        x = F.avg_pool2d(x, 8)
         x = x.view(x.size(0), -1)
         x = self.fc(x)
 

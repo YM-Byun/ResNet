@@ -11,31 +11,20 @@ from torch.autograd import Variable
 from torchvision.datasets import CIFAR10
 from torch.utils.data import DataLoader
 
-device = torch.device('cuda:5')
+device = torch.device('cuda')
 
 classes = ('airplane', 'automobile', 'bird', 'cat', 'deer', 'dog',
     'frog', 'horse', 'ship', 'truck')
 
 def main():
-    '''
-    parser = get_argparser()
-
-    img_path = parser.i
-
-    if not os.path.isfile(img_path):
-        print ("No input file")
-        return
-
-    img = load_img(img_path)
-
-    '''
+    global device
 
     print ("\nLoading ResNet weight...")
 
-    model = 'resnet56'
+    model = 'resnet110'
 
     resnet = ResNet(model)
-    resnet.load_state_dict(torch.load('./weight/best_' + model +'.pth'))
+    resnet.load_state_dict(torch.load('./weight/93_68_' + model +'.pth'))
 
     resnet.to(device)
 
@@ -111,6 +100,8 @@ def classify(model, inputs):
         print (f'\tAcc: {val[0][i].item():.5f}\n')
 
 def test(test_loader, model):
+    global device
+
     model.eval()
     running_loss = 0.0
 
