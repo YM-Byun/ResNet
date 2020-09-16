@@ -13,4 +13,4 @@ Model | Error Rate(in paper) | Error Rate(implement)
 **ResNet18** | x | 7.49 
 **ResNet34** | x | 6.94 
 **ResNet56** | 6.97 | 6.77
-**ResNet110** | 6.43 | 6.32
+**ResNet110** | 6.43 | 6.10
