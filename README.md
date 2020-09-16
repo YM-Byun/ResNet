@@ -14,3 +14,8 @@ Model | Error Rate(in paper) | Error Rate(implement)
 **ResNet34** | x | 6.94 
 **ResNet56** | 6.97 | 6.77
 **ResNet110** | 6.43 | 6.10
+
+
+## 3. Other ResNet
+ - ResNet110 6.25 (https://github.com/kuangliu/pytorch-cifar)
+ - ResNet110 6.32 (https://github.com/akamaster/pytorch_resnet_cifar10)
